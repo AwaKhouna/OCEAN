@@ -16,7 +16,7 @@ def is_categorical_feature(column, columnFeatures):
 
 
 class DatasetReader:
-    def __init__(self, filename, extrapolateDicreteFeatureValues=False):
+    def __init__(self, filename, extrapolateDicreteFeatureValues=False, SEED=0):
         self.filename = filename
         # -- Read raw data and get types --
         self.data = pd.read_csv(self.filename)
@@ -67,7 +67,7 @@ class DatasetReader:
         self.XwithGoodPoint = self.data.loc[self.data['Class']
                                             == 1, self.data.columns != 'Class']
         splits = train_test_split(self.X, self.y,
-                                  test_size=0.2, random_state=0)
+                                  test_size=0.2, random_state=SEED)
         self.X_train, self.X_test, self.y_train, self.y_test = splits
 
     # -- Private methods --
