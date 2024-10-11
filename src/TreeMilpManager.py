@@ -186,14 +186,14 @@ class TreeInMilpManager:
 
     def addContinuousVariablesConsistencyConstraints(self):
         if self.constraintsType == TreeConstraintsType.ExtendedFormulation:
-            print('Warning: this tree constraint type should be avoided,'
-                  ' use TreeConstraintsType.LinearCombinationOfPlanes'
-                  ' instead.')
+            #print('Warning: this tree constraint type should be avoided,'
+            #      ' use TreeConstraintsType.LinearCombinationOfPlanes'
+            #      ' instead.')
             self.addTreeExtendedFormulationVariablesAndConstraints()
         elif self.constraintsType == TreeConstraintsType.BigM:
-            print('Warning: this tree constraint type should be avoided,'
-                  ' use TreeConstraintsType.LinearCombinationOfPlanes'
-                  ' instead.')
+            #print('Warning: this tree constraint type should be avoided,'
+            #      ' use TreeConstraintsType.LinearCombinationOfPlanes'
+            #      ' instead.')
             self.addTreeBigMConstraints()
         elif (self.constraintsType
               == TreeConstraintsType.LinearCombinationOfPlanes):
