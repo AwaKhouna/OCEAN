@@ -19,21 +19,23 @@ class RfClassifierCounterFactualMilp(ClassifierCounterFactualMilp,
             strictCounterFactual=False,
             featuresType=False, featuresPossibleValues=False,
             featuresActionnability=False, oneHotEncoding=False,
+            boundingBox=None,
             constraintsType=TreeConstraintsType.LinearCombinationOfPlanes,
             binaryDecisionVariables=BinaryDecisionVariables.LeftRight_lambda,
-            randomCostsActivated=False):
+            randomCostsActivated=False, gurobi_env=None):
         # Instantiate the ClassifierMilp: implements actionability constraints
         # and feature consistency according to featuresType
         ClassifierCounterFactualMilp.__init__(
             self, classifier, sample, outputDesired,
             objectiveNorm, verbose, featuresType, featuresPossibleValues,
-            featuresActionnability, oneHotEncoding)
+            featuresActionnability, oneHotEncoding, gurobi_env=gurobi_env)
         # Instantiate the RandomForestCounterfactualMilp object
         RandomForestCounterfactualMilp.__init__(
             self, mutuallyExclusivePlanesCutsActivated,
             constraintsType, binaryDecisionVariables)
         assert len(self.clf.feature_importances_) == self.nFeatures
         self.model.modelName = "RandomForestCounterFactualMilp"
+        self.boundingBox = boundingBox
         # Combine random forest and isolation forest into a completeForest
         self.isolationForest = isolationForest
         self.completeForest = RandomAndIsolationForest(self.clf,
@@ -201,6 +203,9 @@ class RfClassifierCounterFactualMilp(ClassifierCounterFactualMilp,
         self.initSolution()
         self.buildForest()
         self.__addMajorityVoteConstraint()
+        # Add bounds constraints of features
+        self.addBoundingBoxConstraints(boundingBox=self.boundingBox)
+
         self.addActionnabilityConstraints()
         self.addOneHotEncodingConstraints()
 
