@@ -18,7 +18,8 @@ class CounterfactualMilp:
 
     def __init__(self, sample, objectiveNorm=2, verbose=False,
                  featuresType=False, featuresPossibleValues=False,
-                 featuresActionnability=False, oneHotEncoding=False):
+                 featuresActionnability=False, oneHotEncoding=False,
+                 gurobi_env=None):
         self.verbose = verbose
         self.x0 = sample
         self.objectiveNorm = objectiveNorm
@@ -47,10 +48,12 @@ class CounterfactualMilp:
         else:
             self.oneHotEncoding = dict()
         # Create Gurobi environment and specify parameters
-        env = gp.Env()
-        if not self.verbose:
-            env.setParam('OutputFlag', 0)
-            env.start()
+        env = gurobi_env
+        if gurobi_env is None:
+            env = gp.Env()
+            if not self.verbose:
+                env.setParam('OutputFlag', 0)
+                env.start()
         # Initialize gurobi model
         self.model = gp.Model("CounterFactualMilp", env=env)
 
@@ -209,12 +212,11 @@ class CounterfactualMilp:
         self.BoundingBoxConstraints = dict()
         if boundingBox is not None:
             for f in range(self.nFeatures):
-                if self.featuresType[f] == FeatureType.Numeric:
-                    if boundingBox[f][0] is not None:    
+                if boundingBox[f][0] is not None:    
                         self.BoundingBoxConstraints[f] = self.model.addConstr(
                         self.x_var_sol[f] >= boundingBox[f][0],
                         "boundingBoxMin_f" + str(f))
-                    if boundingBox[f][1] is not None:
+                if boundingBox[f][1] is not None:
                         self.BoundingBoxConstraints[f] = self.model.addConstr(
                             self.x_var_sol[f] <= boundingBox[f][1],
                             "boundingBoxMax_f" + str(f))

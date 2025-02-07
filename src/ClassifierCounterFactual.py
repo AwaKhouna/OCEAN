@@ -10,11 +10,13 @@ class ClassifierCounterFactualMilp(CounterfactualMilp):
                  featuresPossibleValues=False,
                  featuresActionnability=False,
                  oneHotEncoding=False,
+                 gurobi_env=None,
                  ):
         CounterfactualMilp.__init__(self, sample,
                                     objectiveNorm, verbose, featuresType,
                                     featuresPossibleValues,
-                                    featuresActionnability, oneHotEncoding)
+                                    featuresActionnability, oneHotEncoding,
+                                    gurobi_env)
         # Store classification specific objects
         self.outputDesired = outputDesired
         self.clf = classifier

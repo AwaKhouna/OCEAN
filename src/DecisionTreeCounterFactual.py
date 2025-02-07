@@ -17,7 +17,8 @@ class DecisionTreeCounterFactualMilp(ClassifierCounterFactualMilp):
             oneHotEncoding=False,
             boundingBox=None,
             constraintsType=TreeConstraintsType.ExtendedFormulation,
-            binaryDecisionVariables=BinaryDecisionVariables.LeftRight_lambda):
+            binaryDecisionVariables=BinaryDecisionVariables.LeftRight_lambda,
+            gurobi_env=None):
         ClassifierCounterFactualMilp.__init__(
             self, classifier, sample, int(outputDesired),
             objectiveNorm=objectiveNorm,
@@ -25,7 +26,8 @@ class DecisionTreeCounterFactualMilp(ClassifierCounterFactualMilp):
             featuresType=featuresType,
             featuresPossibleValues=featuresPossibleValues,
             featuresActionnability=featuresActionnability,
-            oneHotEncoding=oneHotEncoding)
+            oneHotEncoding=oneHotEncoding,
+            gurobi_env=gurobi_env)
         self.model.modelName = "DecisionTreeCounterFactualMilp"
         self.boundingBox = boundingBox
         # Specify formulation parameters of forest MILP
@@ -171,11 +173,11 @@ class DecisionTreeCounterFactualMilp(ClassifierCounterFactualMilp):
         self.x_sol = [[]]
         for f in range(self.nFeatures):
             self.x_sol[0].append(self.x_var_sol[f].getAttr(GRB.Attr.X))
-        print("Desired output:", self.outputDesired)
-        print("Solution built \n", self.x_sol,
-              " with prediction ", self.clf.predict(self.x_sol))
-        print("Initial solution:\n", self.x0,
-              " with prediction ", self.clf.predict(self.x0))
+        #print("Desired output:", self.outputDesired)
+        #print("Solution built \n", self.x_sol,
+        #      " with prediction ", self.clf.predict(self.x_sol))
+        #print("Initial solution:\n", self.x0,
+        #      " with prediction ", self.clf.predict(self.x0))
         # Check results consistency
         self._checkIfBadPrediction(self.x_sol)
         self._checkClassificationScore(self.x_sol)
